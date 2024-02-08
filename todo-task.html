@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="todo.css">
+</head>
+<body>
+    <div class="banner">
+
+
+        <div class="banner-one">
+
+          <div class="nav">
+
+    <div class="nav-header">
+              <h2>CATEGORY</h2>
+        
+              
+                <div class="img">
+                    <button id="openModalBtn"><img src="plus.png" alt=""></button>
+                    <p>Create Category</p>
+                </div>
+            
+                <div id="myModalCategory" class="modal">
+                    <div class="modal-content">
+                        <span class="close" id="closeModalBtnTwo">&times;</span>
+                        <form id="categoryForm">
+                            <label for="taskTitle">Category Name:</label><br>
+                            <input type="text" id="CategoryName" placeholder="Add a title" required><br><br>
+                            <label for="">Color:</label>
+                            <input type="color" id="categoryColor" value="#000000"><br><br>
+            
+                            
+                            <button type="submit" class="btn">Add Category</button>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="todo-category">
+                <ul id="todo-lists-category">
+                  <li class="active single_tags" id="allTodos">
+                    <div></div>
+                    All
+                  </li>
+                </ul>
+              </div>
+  
+              <div id="taskModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" id="closeTaskModalBtn">&times;</span>
+                    <form id="taskForm">
+                        <label for="taskTitle">Task Title:</label><br>
+                        <input type="text" id="taskTitle" placeholder="Enter task title" required><br><br>
+            
+                        <label for="taskDescription">Task Description:</label><br>
+                        <textarea id="taskDescription" placeholder="Enter task description"></textarea><br><br>
+            
+                        <label for="tag_id">Category:</label><br>
+                        <select id="tag_id"></select><br><br>
+            
+                        <button type="submit" class="btn">Add Task</button>
+                    </form>
+                </div>
+            </div>
+          </div>
+          <div class="todo_right">
+            <div class="todo_title">
+              <h2 id="user_name"></h2>
+            </div>
+            <div class="img">
+                <button id="openTaskModalBtn"><img src="plus.png" alt=""></button>
+                <p>Create Task</p>
+            </div>
+            <div class="todo_cards" id="todo_cards"></div>
+          </div>
+        </div>
+     
+      </div>
+</body>
+<script src="jQuery.min.js"></script>
+<script src="task.js"></script>
+</html>

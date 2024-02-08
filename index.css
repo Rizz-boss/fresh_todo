@@ -1,0 +1,77 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .container {
+    min-height: 100vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url(pexels-photo-todo.webp);
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+  .header {
+    text-align: center;
+  }
+  .header h1 {
+    font-size: 60px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  .to{
+    color: black;
+  }
+  .header p {
+    margin: 10px 0;
+    font-size: 25px;
+  }
+  .btn {
+    height: 30px;
+    width: 100px;
+    border-radius: 10px;
+    border: 0;
+    background-color: black;
+    color: white;
+    cursor: pointer;
+  }
+  .form {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: gray;
+  }
+  .signup-container{
+    
+        width: 40%;
+        margin: auto;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: whitesmoke;
+      
+  }
+  .input{
+    margin-bottom: 10px;
+    width: 450px;
+    height: 35px;
+    border-radius: 5px;
+    border: 1.5px solid rgb(213, 207, 207);
+    outline: 0;
+    background-color: transparent;
+    box-shadow: 4px 4px 20px rgba(210, 210, 210, 0.5);
+  }
+  .sign{
+    margin-top: 10px;
+  }
+  .signup-container h1{
+    text-align: center;
+  }
+
+  
+  
+  

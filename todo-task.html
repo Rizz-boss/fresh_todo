@@ -65,6 +65,31 @@
                     </form>
                 </div>
             </div>
+            
+<!-- Edit Task Modal -->
+<div id="editTaskModal" class="modal">
+  <div class="modal-content">
+      <span class="close" id="closeEditModalBtn">&times;</span>
+      <h2>Edit Task</h2>
+      <form id="editTaskForm">
+          <input type="hidden" id="edit_task_id">
+          <label for="edit_title">Title:</label><br>
+          <input type="text" id="edit_title" required><br><br>
+
+          <label for="edit_content">Content:</label><br>
+          <textarea id="edit_content"></textarea><br><br>
+
+          <label for="edit_tag_id">Category:</label><br>
+          <select id="edit_tag_id"></select><br><br>
+
+
+          <button type="submit" class="btn">Update Task</button>
+      </form>
+  </div>
+</div>
+
+
+
           </div>
           <div class="todo_right">
             <div class="todo_title">

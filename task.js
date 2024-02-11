@@ -1,64 +1,66 @@
 $(document).ready(function () {
-    let apiUrl = "http://example.com/api/v1";
-    let currentUser = JSON.parse(localStorage.getItem("Current_User"));
-    $("#welcome_message").html(`Hello, ${currentUser.name}`);
+    let url = "http://todo.reworkstaging.name.ng/v1";
+    let loggedUser = JSON.parse(localStorage.getItem("Task_Manager_User"));
+    $("#user_name").html(`Welcome, ${loggedUser.name}`);
+    
 
-    function fetchAllCategories() {
+    // Function to populate the category dropdown
+    function populateCategoryDropdown() {
+       
+            // Clear the existing options in the dropdown
+            $("#tag_id").empty();
+        
+            // Make an AJAX request to fetch all tags for the logged-in user
+            $.ajax({
+                method: "GET",
+                url: `${url}/tags?user_id=${loggedUser.id}`,
+                success: function (data) {
+                    // Iterate over the retrieved tags and populate the dropdown options
+                    $.each(data, function (i, tag) {
+                        $("#tag_id").append(`<option value="${tag.id}">${tag.title}</option>`);
+                    });
+                },
+                error: function (err) {
+                    console.log(err);
+                },
+            });
+        
+        
+    }
+
+    // Get Tasks
+    function getAllTasks() {
         $.ajax({
             method: "GET",
-            url: `${apiUrl}/categories?user_id=${currentUser.id}`,
+            url: `${url}/tasks?user_id=${loggedUser.id}`,
             success: function (data) {
-                $.each(data, function (index, category) {
-                    $("#category-list").append(
-                        `<li id='${category.id}' class='category-item'>
-                            <div style='background-color: ${category.color}'></div>
-                            ${category.name}
-                        </li>`
-                    );
-                    $("#category-dropdown").append(`
-                        <option value='${category.id}'>${category.name}</option>
-                    `);
-                });
+                displayTask(data);
             },
-            error: function (error) {
-                console.log(error);
+            error: function (err) {
+                console.log(err);
             },
         });
     }
-    fetchAllCategories();
+    getAllTasks();
 
-    // Get User Tasks
-    function fetchUserTasks() {
-        $.ajax({
-            method: "GET",
-            url: `${apiUrl}/tasks?user_id=${currentUser.id}`,
-            success: function (data) {
-                displayTasks(data);
-            },
-            error: function (error) {
-                console.log(error);
-            },
-        });
-    }
-    fetchUserTasks();
-
-    function displayTasks(data) {
-        let tasksHTML = "";
+    function displayTask(data) {
+        console.log(data);
+        let todos = "";
         if (data.length) {
-            $.each(data, function (index, task) {
-                tasksHTML += `
-                    <div class="task-item">
-                        <div class="task-title">
-                            <h3>${task.title}</h3>
-                            <div class="task-icons">
-                                <button class="edit-btn"><img src='edit.png'></button>
-                                <button class="delete-btn"><img src='delete.png'></button>
+            $.each(data, function (i, ele) {
+                todos += `
+                    <div class="todo_card">
+                        <div class="todo_card_title">
+                            <h3>${ele.title}</h3>
+                            <div class="todo_card_title_icons">
+                                <button class="edit_btn" style="background-color: transparent; border: none;"><img src='edit.png'></button>
+                                <button class="delete_btn" style="background-color: transparent; border: none;"><img src='delete.png'></button>
                             </div>
                         </div>
-                        <p>${task.description}</p>
-                        <div class="task-footer">
-                            <div class="category">${task.category}</div>
-                            <div class="task-status">
+                        <p>${ele.content}</p>
+                        <div class="todo_card_footer">
+                            <div >${ele.tag}</div>
+                            <div class="todo_card_status">
                                 <input type="checkbox" id="" />
                                 <span>Done</span>
                             </div>
@@ -66,90 +68,239 @@ $(document).ready(function () {
                     </div>
                 `;
             });
-            $("#task-list").html(tasksHTML);
+            $("#todo_cards").html(todos);
         } else {
-            $("#task-list").html("No tasks available");
+            $("#todo_cards").html("No Todos Created");
         }
     }
 
-    function showModal() {
+    // Function to delete a task
+// Function to delete a task
+function deleteTask(taskId) {
+    // Ask for confirmation before deleting
+    if (confirm("Are you sure you want to delete this task?")) {
+        // Make AJAX request to delete the task
+        $.ajax({
+            method: "DELETE",
+            url: `${url}/task{task.id}`,
+            success: function () {
+                // Remove the task element from the DOM
+                $(`.todo_card[data-id="${taskId}"]`).remove();
+                alert("Task Deleted");
+            },
+            error: function (err) {
+                console.log(err);
+            },
+        });
+    }
+}
+
+// Event listener for delete button click
+$(document).on("click", ".delete_btn", function () {
+    let taskId = $(this).closest('.todo_card').data('id');
+    deleteTask(taskId);
+});
+
+
+
+    function TodoModal() {
+        $("#myModalCategory").fadeIn();
+        $("body").addClass("modal-open");
+    }
+
+    function HideTodoModal() {
+        $("#myModalCategory").fadeOut();
+        $("body").removeClass("modal-open");
+    }
+
+    function openTaskModal() {
         $("#taskModal").fadeIn();
         $("body").addClass("modal-open");
     }
 
-    function hideModal() {
+    function closeTaskModal() {
         $("#taskModal").fadeOut();
         $("body").removeClass("modal-open");
     }
 
-    function createNewCategory() {
-        let newCategory = {
-            user_id: currentUser.id,
-            name: $("#newCategoryName").val(),
-            color: $("#newCategoryColor").val(),
+    $("#openModalBtn").click(TodoModal);
+    $("#closeModalBtnTwo").click(HideTodoModal);
+
+    function createTag() {
+        let newTag = {
+            user_id: loggedUser.id,
+            title: $("#CategoryName").val(),
+            color: $("#categoryColor").val(),
         };
         $.ajax({
             method: "POST",
-            url: `${apiUrl}/categories`,
-            data: newCategory,
-            success: function () {
-                alert("Category Created");
-                hideModal(); // Close the modal after creating a category
+            url: `${url}/tags`,
+            data: newTag,
+            success: function (success) {
+                alert("Tag Created");
+                console.log(success);
+                HideTodoModal();
             },
-            error: function (error) {
-                console.log(error);
+            error: function (err) {
+                console.log(err);
             },
         });
     }
 
-    $("#newCategoryForm").submit(function (event) {
+    $("#categoryForm").submit(function (event) {
         event.preventDefault();
-        createNewCategory();
+        createTag();
     });
 
-    function handleTaskForm(event) {
+    function createTask() {
+        let newTask = {
+            tag_id: $("#tag_id").val(),
+            title: $("#taskTitle").val(),
+            content: $("#taskDescription").val(),
+        };
+        $.ajax({
+            method: "POST",
+            url: `${url}/tasks`,
+            data: newTask,
+            success: function () {
+                getAllTasks();
+                alert("Task Created");
+            },
+            error: function (err) {
+                console.log(err);
+            },
+        });
+    }
+    // Function to handle task editing
+function editTask(taskId) {
+    // Make AJAX request to fetch the details of the task to be edited
+    $.ajax({
+        method: "GET",
+        url: `${url}/tasks?user_id=${loggedUser.id}`,
+        success: function (task) {
+            
+            $("#edit_task_id").val(task.id);
+            $("#edit_title").val(task.title);
+            $("#edit_content").val(task.content);
+            $("#edit_tag_id").val(task.tag_id);
+            
+            
+            $("#editTaskModal").fadeIn();
+            $.each(data, function (i, tag) {
+                $("#tag_id").append(`<option value="${tag.id}">${tag.title}</option>`);
+            });
+        },
+       
+        error: function (err) {
+            console.log(err);
+        },
+    });
+}
+
+// Event listener for edit button click
+$(document).on("click", ".edit_btn", function () {
+    let taskId = $(this).closest('.todo_card').data('id');
+    editTask(taskId); // Call editTask function with taskId
+});
+
+// Event listener for edit form submission
+$("#editTaskForm").submit(function (event) {
+    event.preventDefault();
+    let taskId = $("#edit_task_id").val();
+    let updatedTask = {
+        title: $("#edit_title").val(),
+        content: $("#edit_content").val(),
+        tag_id: $("#edit_tag_id").val(),
+    };
+    // Make AJAX request to update the task
+    $.ajax({
+        method: "PUT", // Assuming your API uses PUT for updates
+        url: `${url}/tasks`,
+        data: updatedTask,
+        success: function () {
+            getAllTasks(); // Refresh the tasks after update
+            alert("Task Updated");
+            $("#editTaskModal").fadeOut();
+        },
+        error: function (err) {
+            console.log(err);
+        },
+    });
+});
+
+
+    
+    function getAllTags() {
+        $.ajax({
+            method: "GET",
+            url: `${url}/tags?user_id=${loggedUser.id}`,
+            success: function (data) {
+                $.each(data, function (i, ele) {
+                    $("#todo-lists-category").append(
+                        `<li id='${ele.id}' class='single_tags'>
+                            <div style='background-color: ${ele.color}'></div>
+                            ${ele.title}
+                        </li>`
+                    );
+                    $("#tag_id").append(`
+                        <option value='${ele.id}'>${ele.title}</option>
+                    `);
+                });
+            },
+            error: function (err) {
+                console.log(err);
+            },
+        });
+    }
+
+    getAllTags();
+
+    // Event listener for edit button
+
+    function handleTaskFormSubmission(event) {
         event.preventDefault();
         createTask();
-        hideModal();
+        closeTaskModal();
     }
 
     $(document).ready(function () {
-        // ...
-
-        $("#openTaskModalBtn").click(showModal);
-
-        $("#closeTaskModalBtn").click(hideModal);
-
-        $("#openTaskModalBtn").click(fetchAllCategories);
-
-        $("#taskForm").submit(handleTaskForm);
-
-        // ...
+        $("#openTaskModalBtn").click(openTaskModal);
+        $("#closeTaskModalBtn").click(closeTaskModal);
+        $("#openTaskModalBtn").click(populateCategoryDropdown);
+        $("#taskForm").submit(handleTaskFormSubmission);
     });
 
-    function filterCategories() {
-        $("#category-list").on("click", ".category-item", function () {
-            let categoryId = $(this).attr("id");
-            let categoryItems = $("#category-list .category-item");
-            categoryItems.removeClass("active");
+    function filterTag() {
+        $("#todo-lists-category").on("click", ".single_tags", function () {
+            let tagId = $(this).attr("id");
+            let childLis = $("#todo-lists-category .single_tags");
+            childLis.removeClass("active");
             $(this).addClass("active");
 
-            if (categoryId === "allCategories") {
-                fetchUserTasks();
+            if (tagId === "allTodos") {
+                getAllTasks();
             } else {
                 $.ajax({
                     method: "GET",
-                    url: `${apiUrl}/categories/tasks?category_id=${categoryId}`,
+                    url: `${url}/tags/tasks?tag_id=${tagId}`,
                     success: function (data) {
-                        displayTasks(data);
+                        displayTask(data);
                     },
-                    error: function (error) {
-                        console.log(error);
+                    error: function (err) {
+                        console.log(err);
                     },
                 });
             }
         });
     }
 
-    filterCategories();
+    filterTag();
 });
+
+
+    
+
+
+
+
+
